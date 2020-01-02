@@ -14,27 +14,57 @@ if (isset($_POST['update'])) {
     $net_amount = $_POST['net_amount'];
 
     $query = '';
-    if ($query != NULL && $query!= '') {
-        $query = "UPDATE sales SET date='" . $date . "',customer_name='" . $customer_name . "',mobile_no='" . $mobile_no . "',paying_for_type='" . $paying_for_type . "',bill_amount='" . $bill_amount . "',booking_amount='" . $booking_amount . "',discount='" . $discount . "',foc='" . $foc . "',net_amount='" . $net_amount . "' WHERE pan = '" . $pan . "'";
-        $update_Result = mysqli_query($con, $query);
-        if ($update_Result) {
-            if (mysqli_affected_rows($con) > 0) {
-                echo 'Update Customer Details';
-            } else {
-                echo 'Customr Details Not Updated';
+    // if ($query != NULL && $query!= '') {
+    //     $query = "UPDATE sales SET date='" . $date . "',customer_name='" . $customer_name . "',mobile_no='" . $mobile_no . "',paying_for_type='" . $paying_for_type . "',bill_amount='" . $bill_amount . "',booking_amount='" . $booking_amount . "',discount='" . $discount . "',foc='" . $foc . "',net_amount='" . $net_amount . "' WHERE pan = '" . $pan . "'";
+    //     $update_Result = mysqli_query($con, $query);
+    //     if ($update_Result) {
+    //         if (mysqli_affected_rows($con) > 0) {
+    //             echo 'Update Customer Details';
+    //         } else {
+    //             echo 'Customr Details Not Updated';
+    //         }
+    //     }
+    // }
+    // else {
+    //     $query = "INSERT INTO sales(date,pan,customer_name,mobile_no,paying_for_type,bill_amount,booking_amount,discount,foc,net_amount) VALUES('$date','$pan','$customer_name','$mobile_no','$paying_for_type','$bill_amount','$booking_amount','$discount','$foc','$net_amount')";
+    //     $update_Result = mysqli_query($con, $query);
+    //     if ($update_Result) {
+    //         if (mysqli_affected_rows($con) > 0) {
+    //             echo 'Insert Customer  Details';
+    //         } else {
+    //             echo 'Customr Details Not Inserted';
+    //         }
+    //     }
+    // }
+
+    try {
+        $stmt=$con->prepare('select customer_name from sales where pan=?');
+        $stmt->bind_param('s',$_POST['pan']);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows > 0) {
+            $query = "UPDATE sales SET date='" . $date . "',customer_name='" . $customer_name . "',mobile_no='" . $mobile_no . "',paying_for_type='" . $paying_for_type . "',bill_amount='" . $bill_amount . "',booking_amount='" . $booking_amount . "',discount='" . $discount . "',foc='" . $foc . "',net_amount='" . $net_amount . "' WHERE pan = '" . $pan . "'";
+            $update_Result = mysqli_query($con, $query);
+            if ($update_Result) {
+                if (mysqli_affected_rows($con) > 0) {
+                    echo 'Update Customer Details';
+                } else {
+                    echo 'Customr Details Not Updated';
+                }
+            }
+        } else {
+            $query = "INSERT INTO sales(date,pan,customer_name,mobile_no,paying_for_type,bill_amount,booking_amount,discount,foc,net_amount) VALUES('$date','$pan','$customer_name','$mobile_no','$paying_for_type','$bill_amount','$booking_amount','$discount','$foc','$net_amount')";
+            $update_Result = mysqli_query($con, $query);
+            if ($update_Result) {
+                if (mysqli_affected_rows($con) > 0) {
+                    echo 'Insert Customer  Details';
+                } else {
+                    echo 'Customr Details Not Inserted';
+                }
             }
         }
-    }
-    else {
-        $query = "INSERT INTO sales(date,pan,customer_name,mobile_no,paying_for_type,bill_amount,booking_amount,discount,foc,net_amount) VALUES('$date','$pan','$customer_name','$mobile_no','$paying_for_type','$bill_amount','$booking_amount','$discount','$foc','$net_amount')";
-        $update_Result = mysqli_query($con, $query);
-        if ($update_Result) {
-            if (mysqli_affected_rows($con) > 0) {
-                echo 'Insert Customer  Details';
-            } else {
-                echo 'Customr Details Not Inserted';
-            }
-        }
+    } catch (\Throwable $th) {
+        throw $th;
     }
 }
 ?>
@@ -186,5 +216,3 @@ if (isset($_POST['update'])) {
         </script>
     </body>
 </html>
-
-
